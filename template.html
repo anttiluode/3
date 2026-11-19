@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07131b">
+  <title>THREE — Matter from Residue</title>
+  <meta name="description" content="Three live optical-art experiments connecting Sihti residues, Gabor splats and Moon-inspired translucent light transport.">
+  <style>
+  :root{color-scheme:dark;--bg:#07131b;--panel:#0d1d27;--line:#29414d;--text:#e7eff0;--muted:#8ba2aa;--accent:#b7eacb;--gold:#e7be80;--aqua:#8cd7d8}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 72% 6%,#173b4550,transparent 47%),radial-gradient(circle at 4% 90%,#53382422,transparent 40%)}
+  button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .shell{max-width:1760px;margin:0 auto;padding:0 22px 28px;position:relative}
+  header{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff18;gap:16px}
+  .brand{display:flex;align-items:center;gap:17px}.brandMark{width:44px;height:44px;border:1px solid #9ccecc99;border-radius:50%;display:grid;place-items:center;font:500 29px Georgia,serif;color:#d1e9db;box-shadow:inset 0 0 22px #8cd7d822,0 0 20px #8cd7d813}
+  .eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.25em;color:#aac6c7}.brandTitle{font:500 22px Georgia,serif;letter-spacing:.025em;margin:0}.subBrand{font-size:11px;color:var(--muted)}
+  .headRight{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px}.headRight a{color:var(--aqua);text-decoration:none}.statusDot{width:7px;height:7px;border-radius:50%;background:#9fe9c2;box-shadow:0 0 12px #9fe9c2}
+  .modeBar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:20px 0}.mode{border:1px solid var(--line);background:#101f28;color:var(--muted);text-align:left;border-radius:12px;padding:14px 18px;min-height:79px;transition:.2s;display:flex;gap:14px;align-items:center}.mode:hover{border-color:#6db8b0}.mode[aria-selected="true"]{border-color:#8cd7d88c;background:linear-gradient(135deg,#244048ad,#112530);color:var(--text);box-shadow:inset 0 1px #ffffff14}.modeNum{font:italic 27px Georgia,serif;color:var(--gold)}.mode strong{font-size:13px;font-weight:600;display:block}.mode small{display:block;color:var(--muted);font-size:11px;line-height:1.4}
+  .layout{display:grid;grid-template-columns:260px minmax(340px,1fr) 258px;gap:14px;align-items:stretch}.panel{border:1px solid var(--line);border-radius:13px;background:#101f28ba;min-width:0;backdrop-filter:blur(10px)}.sidebar{padding:19px;display:flex;flex-direction:column;gap:20px}.sectionTitle{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#98b8be;margin:0 0 11px}.title2{font:500 23px/1.15 Georgia,serif;color:#e2e7df;margin:0 0 10px}.description{color:#a9bcc2;font-size:12px;line-height:1.65;margin:0}.rule{height:1px;background:var(--line)}
+  .btn{border:1px solid #49646d;border-radius:8px;padding:9px 12px;background:#1b3540;color:#e0f2ee;transition:.2s;min-height:36px}.btn:hover{background:#27515b}.btn.primary{color:#0a2427;background:#b9e6d2;border-color:#b9e6d2;font-weight:650}.btn.primary:hover{background:#d4fae3}.btn:disabled{opacity:.5;cursor:default}.stack{display:grid;gap:8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fileBtn{display:block;text-align:center;cursor:pointer}.fileBtn input{display:none}
+  .sliderGroup{margin:0 0 13px}.slHead{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:6px}.slHead span:first-child{color:#c5d9d9}.slHead output{font-variant-numeric:tabular-nums;color:var(--gold)}input[type=range]{width:100%;accent-color:#9edac9;cursor:pointer}
+  .palette{display:flex;gap:7px;flex-wrap:wrap}.swatch{padding:6px 8px;border-radius:7px;border:1px solid #3e515a;color:#bcd0cf;background:#172d36;font-size:11px}.swatch[aria-pressed="true"]{border-color:#bde8d9;background:#35514f;color:white}
+  .stage{position:relative;overflow:hidden;min-height:610px;background:#071722;border:1px solid #36505b;border-radius:13px;isolation:isolate}.stage canvas{width:100%;height:100%;display:block;position:absolute;inset:0}#shards{pointer-events:none}
+  .stageTop{position:absolute;top:18px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:start;gap:12px;pointer-events:none}.stageLabel{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#b3d5d4}.stageSmall{font-size:11px;color:#81a8b1}.stageTag{border:1px solid #607b805c;background:#0a1e2b96;backdrop-filter:blur(5px);padding:5px 8px;border-radius:5px;color:#bddad4;font-size:10px;letter-spacing:.08em}
+  .stageBottom{position:absolute;bottom:20px;left:20px;right:20px;display:flex;align-items:end;justify-content:space-between;gap:15px;pointer-events:none}.stageBottom p{margin:0;font-size:12px;color:#b6d0cd;max-width:280px}.stageLegend{font-size:10px;color:#85a9af;letter-spacing:.08em;text-transform:uppercase;text-align:right}.stage button{pointer-events:auto}
+  .readout{border:1px solid #304853;background:#0b1a25;padding:12px;border-radius:9px;display:grid;grid-template-columns:1fr auto;gap:7px;font-size:11px;color:#93aeb3}.readout strong{color:#e8e4d8;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+  .inspectBox{border:1px solid #344d56;background:#071922;border-radius:10px;padding:8px}.inspectBox canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;image-rendering:auto;border-radius:5px}.inspectCaption{display:flex;justify-content:space-between;color:#9eb9bd;font-size:10px;padding:5px 0 0;gap:8px}.inspectorGrids{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .energyBar{height:6px;background:#294047;border-radius:10px;overflow:hidden;margin:3px 0 7px}.energyBar b{display:block;height:100%;width:2%;background:linear-gradient(90deg,#6ac2c2,#e1b785);border-radius:10px}.bandRow{display:grid;grid-template-columns:68px 1fr 30px;gap:8px;align-items:center;font-size:10px;color:#a6b6bb}.bandRow .energyBar{margin:0}.bandRow em{font-style:normal;text-align:right}
+  footer{display:flex;justify-content:space-between;gap:20px;padding-top:17px;color:#708d93;font-size:11px}footer a{color:#b8d9d9;text-decoration:none}kbd{border:1px solid #526973;color:#b9d5d8;padding:1px 4px;border-radius:3px;font-size:10px}
+  .hidden{display:none!important}#toast{position:absolute;bottom:84px;left:50%;transform:translateX(-50%);color:#e4f8f1;background:#103c42e9;border:1px solid #71c3be;padding:8px 14px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;font-size:12px}#toast.visible{opacity:1}
+  @media(max-width:1100px){.layout{grid-template-columns:220px minmax(320px,1fr)}.rightSide{grid-column:1/-1}.rightSide .inspectorGrids{max-width:400px}.stage{min-height:580px}}
+  @media(max-width:720px){.shell{padding:0 12px 16px}header{height:auto;padding:14px 0}.brandTitle{font-size:18px}.headRight .headExtra{display:none}.modeBar{gap:6px;padding:13px 0}.mode{min-height:75px;padding:8px;gap:8px}.modeNum{font-size:20px}.mode strong{font-size:11px}.mode small{font-size:9px}.layout{display:flex;flex-direction:column}.stage{order:0;min-height:470px}.leftSide{order:1}.rightSide{order:2}.stageBottom{bottom:12px;left:12px;right:12px}.stageBottom p{font-size:10px}.sidebar{padding:15px}.inspectorGrids{grid-template-columns:1fr 1fr}.rightSide .inspectorGrids{max-width:none}footer{flex-direction:column;gap:6px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand"><div class="brandMark">3</div><div><div class="eyebrow">Experimental optics laboratory</div><h1 class="brandTitle">Matter from Residue</h1><div class="subBrand">Sihti × SplatWorld × Moon / CrystalMoon</div></div></div>
+    <div class="headRight"><span class="statusDot"></span><span id="sourceStatus">Procedural source</span><span class="headExtra">· Browser-only · No server</span><a href="https://github.com/anttiluode/3" target="_blank" rel="noopener">GitHub ↗</a></div>
+  </header>
+  <nav class="modeBar" aria-label="Choose experiment">
+    <button class="mode" type="button" data-mode="1" aria-selected="true"><span class="modeNum">01</span><span><strong>The Self-Carving Crystal</strong><small>Gabor packets chase the image residue</small></span></button>
+    <button class="mode" type="button" data-mode="2" aria-selected="false"><span class="modeNum">02</span><span><strong>Frequency-as-Depth Alchemy</strong><small>Peel from deep glow to sharp surface</small></span></button>
+    <button class="mode" type="button" data-mode="3" aria-selected="false"><span class="modeNum">03</span><span><strong>Shatter &amp; Reform</strong><small>Scatter the packets, then let them return</small></span></button>
+  </nav>
+  <main class="layout">
+    <aside class="panel sidebar leftSide">
+      <section><p class="sectionTitle">The experiment</p><h2 class="title2" id="modeTitle">A crystal that learns your shape.</h2><p class="description" id="modeDesc">A blank luminous body becomes an image, one fitted Gabor packet at a time. The image residual decides where the next packet goes.</p></section>
+      <div class="rule"></div>
+      <section><p class="sectionTitle">01 / Choose the world</p><div class="stack"><button class="btn primary" id="cameraBtn">◉ Use live camera</button><label class="btn fileBtn" for="fileInput">↑ Load a photo<input id="fileInput" type="file" accept="image/*"></label><button class="btn" id="demoBtn">↻ Procedural portrait</button></div><p class="description" style="margin-top:9px" id="cameraNote">Camera permission is requested only when you click. No frames leave this page.</p></section>
+      <div class="rule"></div>
+      <section><p class="sectionTitle">02 / Optical controls</p>
+        <div class="sliderGroup"><div class="slHead"><span>Scattering</span><output id="scatterVal">54%</output></div><input id="scatter" aria-label="Scattering" type="range" min="0" max="100" value="54"></div>
+        <div class="sliderGroup"><div class="slHead"><span>Optical thickness</span><output id="depthVal">52%</output></div><input id="depth" aria-label="Optical thickness" type="range" min="0" max="100" value="52"></div>
+        <div class="sliderGroup" id="peelSection"><div class="slHead"><span>Peel toward surface</span><output id="peelVal">35%</output></div><input id="peel" aria-label="Peel toward surface" type="range" min="0" max="100" value="35"></div>
+        <div class="sliderGroup" id="detailSection"><div class="slHead"><span>Reconstructed detail</span><output id="detailVal">100%</output></div><input id="detail" aria-label="Reconstructed detail" type="range" min="0" max="100" value="100"></div>
+      </section>
+      <section><p class="sectionTitle">03 / Material</p><div class="palette" role="group" aria-label="Choose material"><button class="swatch" data-mat="ice" aria-pressed="true">Ice</button><button class="swatch" data-mat="amber" aria-pressed="false">Amber</button><button class="swatch" data-mat="jade" aria-pressed="false">Jade</button><button class="swatch" data-mat="opal" aria-pressed="false">Opal</button><button class="swatch" data-mat="skin" aria-pressed="false">Wax</button></div></section>
+      <div class="stack" style="margin-top:auto"><button class="btn primary hidden" id="shatterBtn">✦ SHATTER THE CRYSTAL</button><div class="two"><button class="btn" id="resetBtn">Reset atoms</button><button class="btn" id="saveBtn">Save frame</button></div></div>
+    </aside>
+    <section class="stage" id="stage" aria-label="Interactive translucent world" role="region">
+      <canvas id="world" aria-label="Optical 3D view"></canvas><canvas id="shards" aria-hidden="true"></canvas>
+      <div class="stageTop"><div><div class="stageLabel" id="viewLabel">01 — Self-carving matter</div><div class="stageSmall">Drag the light · watch material emerge</div></div><div class="stageTag" id="shaderTag">WEBGL2 · STYLIZED TRANSPORT</div></div>
+      <div class="stageBottom"><p id="stageHint">The crystal condenses from broad shapes to smaller details. Move your cursor to relight it.</p><div class="stageLegend">Mouse → light position<br>1 / 2 / 3 → experiments</div></div>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </section>
+    <aside class="panel sidebar rightSide">
+      <section><p class="sectionTitle">Live evidence</p><div class="inspectorGrids"><div class="inspectBox"><canvas id="sourcePreview" width="144" height="144"></canvas><div class="inspectCaption"><span>Known input</span><span>96 × 96</span></div></div><div class="inspectBox"><canvas id="residuePreview" width="144" height="144"></canvas><div class="inspectCaption"><span>Unexplained residue</span><span>×3 contrast</span></div></div></div></section>
+      <section><p class="sectionTitle">Sieve / scale-space energy</p><div id="bands"></div><p class="description" style="margin-top:8px">The Sihti-style bands telescope back to the original image. Here, assigning those bands to optical depths is a creative rendering choice.</p></section>
+      <section><p class="sectionTitle">Reconstruction telemetry</p><div class="readout"><span>Gabor packets fitted</span><strong id="packetCount">0 / 190</strong><span>RGB mean absolute residue</span><strong id="errorVal">—</strong><span>Fitting stage</span><strong id="fitStage">CORE</strong><span>Frames rendered</span><strong id="frameCount">0</strong></div></section>
+      <section><p class="sectionTitle">What is real?</p><p class="description">Greedy packet fitting and additive image residues are computed on your input. Translucency, depth and refraction are illustrative optical effects, <strong style="color:#d1e6e2;font-weight:500">not measured 3D geometry</strong>.</p></section>
+    </aside>
+  </main>
+  <footer><span>Three connected experiments · Runs offline after loading · No AI model download</span><span><kbd>V</kbd> camera · <kbd>Space</kbd> shatter · <kbd>R</kbd> restart · <kbd>S</kbd> screenshot · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> modes</span></footer>
+</div>
+<video id="webcam" autoplay playsinline muted class="hidden"></video>
+<canvas id="inputCanvas" width="96" height="96" class="hidden"></canvas>
+<script type="module" src="app.mjs"></script>
+</body></html>
