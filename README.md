@@ -23,6 +23,11 @@ Test the numerical core with `npm test` (Node 20+).
 - [SplatWorld](https://github.com/anttiluode/SplatWorld): inspires oriented Gaussian-windowed cosine (Gabor) primitives; this demo fits its own simple packets greedily to a user image, rather than using SplatWorld's trained 7.2MB CelebA decoder.
 - [Moon](https://github.com/anttiluode/Moon) and [CrystalMoon](https://github.com/anttiluode/CrystalMoon): inspire refractive/translucent visual design; the shader here is a compact, custom, stylized approximation, **not** Moon's validated network or CrystalMoon's field PDE.
 
+
+## Editing and rebuilding
+
+`template.html` is the HTML shell. `engine.mjs`, `render.mjs` and `app.mjs` are the readable source modules. After editing them, run `python build.py` to regenerate the self-contained `index.html`, then commit the updated build. This avoids external module imports when opening the published demo directly from disk.
+
 ## Scientific boundary
 
 This is **art and an inspectable computational analogy**, not a method for instant 3D reconstruction. A spatial frequency band does not uniquely specify physical depth. Greedy pixel-space splat fitting is not a calibrated inverse renderer. The relighting is a material shader (Fresnel, Beer–Lambert-like attenuation and blur); no 3D object, material density or true scattering properties are measured from the image. The on-screen *unexplained residue* shows what our own 2D fitter has not represented yet. No pretrained neural network, gradient descent, or physics accuracy claim is made.
