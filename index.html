@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07131b">
+  <title>THREE — Matter from Residue</title>
+  <meta name="description" content="Three live optical-art experiments connecting Sihti residues, Gabor splats and Moon-inspired translucent light transport.">
+  <style>
+  :root{color-scheme:dark;--bg:#07131b;--panel:#0d1d27;--line:#29414d;--text:#e7eff0;--muted:#8ba2aa;--accent:#b7eacb;--gold:#e7be80;--aqua:#8cd7d8}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 72% 6%,#173b4550,transparent 47%),radial-gradient(circle at 4% 90%,#53382422,transparent 40%)}
+  button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .shell{max-width:1760px;margin:0 auto;padding:0 22px 28px;position:relative}
+  header{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff18;gap:16px}
+  .brand{display:flex;align-items:center;gap:17px}.brandMark{width:44px;height:44px;border:1px solid #9ccecc99;border-radius:50%;display:grid;place-items:center;font:500 29px Georgia,serif;color:#d1e9db;box-shadow:inset 0 0 22px #8cd7d822,0 0 20px #8cd7d813}
+  .eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.25em;color:#aac6c7}.brandTitle{font:500 22px Georgia,serif;letter-spacing:.025em;margin:0}.subBrand{font-size:11px;color:var(--muted)}
+  .headRight{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px}.headRight a{color:var(--aqua);text-decoration:none}.statusDot{width:7px;height:7px;border-radius:50%;background:#9fe9c2;box-shadow:0 0 12px #9fe9c2}
+  .modeBar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:20px 0}.mode{border:1px solid var(--line);background:#101f28;color:var(--muted);text-align:left;border-radius:12px;padding:14px 18px;min-height:79px;transition:.2s;display:flex;gap:14px;align-items:center}.mode:hover{border-color:#6db8b0}.mode[aria-selected="true"]{border-color:#8cd7d88c;background:linear-gradient(135deg,#244048ad,#112530);color:var(--text);box-shadow:inset 0 1px #ffffff14}.modeNum{font:italic 27px Georgia,serif;color:var(--gold)}.mode strong{font-size:13px;font-weight:600;display:block}.mode small{display:block;color:var(--muted);font-size:11px;line-height:1.4}
+  .layout{display:grid;grid-template-columns:260px minmax(340px,1fr) 258px;gap:14px;align-items:stretch}.panel{border:1px solid var(--line);border-radius:13px;background:#101f28ba;min-width:0;backdrop-filter:blur(10px)}.sidebar{padding:19px;display:flex;flex-direction:column;gap:20px}.sectionTitle{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#98b8be;margin:0 0 11px}.title2{font:500 23px/1.15 Georgia,serif;color:#e2e7df;margin:0 0 10px}.description{color:#a9bcc2;font-size:12px;line-height:1.65;margin:0}.rule{height:1px;background:var(--line)}
+  .btn{border:1px solid #49646d;border-radius:8px;padding:9px 12px;background:#1b3540;color:#e0f2ee;transition:.2s;min-height:36px}.btn:hover{background:#27515b}.btn.primary{color:#0a2427;background:#b9e6d2;border-color:#b9e6d2;font-weight:650}.btn.primary:hover{background:#d4fae3}.btn:disabled{opacity:.5;cursor:default}.stack{display:grid;gap:8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fileBtn{display:block;text-align:center;cursor:pointer}.fileBtn input{display:none}
+  .sliderGroup{margin:0 0 13px}.slHead{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:6px}.slHead span:first-child{color:#c5d9d9}.slHead output{font-variant-numeric:tabular-nums;color:var(--gold)}input[type=range]{width:100%;accent-color:#9edac9;cursor:pointer}
+  .palette{display:flex;gap:7px;flex-wrap:wrap}.swatch{padding:6px 8px;border-radius:7px;border:1px solid #3e515a;color:#bcd0cf;background:#172d36;font-size:11px}.swatch[aria-pressed="true"]{border-color:#bde8d9;background:#35514f;color:white}
+  .stage{position:relative;overflow:hidden;min-height:610px;background:#071722;border:1px solid #36505b;border-radius:13px;isolation:isolate}.stage canvas{width:100%;height:100%;display:block;position:absolute;inset:0}#shards{pointer-events:none}
+  .stageTop{position:absolute;top:18px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:start;gap:12px;pointer-events:none}.stageLabel{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#b3d5d4}.stageSmall{font-size:11px;color:#81a8b1}.stageTag{border:1px solid #607b805c;background:#0a1e2b96;backdrop-filter:blur(5px);padding:5px 8px;border-radius:5px;color:#bddad4;font-size:10px;letter-spacing:.08em}
+  .stageBottom{position:absolute;bottom:20px;left:20px;right:20px;display:flex;align-items:end;justify-content:space-between;gap:15px;pointer-events:none}.stageBottom p{margin:0;font-size:12px;color:#b6d0cd;max-width:280px}.stageLegend{font-size:10px;color:#85a9af;letter-spacing:.08em;text-transform:uppercase;text-align:right}.stage button{pointer-events:auto}
+  .readout{border:1px solid #304853;background:#0b1a25;padding:12px;border-radius:9px;display:grid;grid-template-columns:1fr auto;gap:7px;font-size:11px;color:#93aeb3}.readout strong{color:#e8e4d8;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+  .inspectBox{border:1px solid #344d56;background:#071922;border-radius:10px;padding:8px}.inspectBox canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;image-rendering:auto;border-radius:5px}.inspectCaption{display:flex;justify-content:space-between;color:#9eb9bd;font-size:10px;padding:5px 0 0;gap:8px}.inspectorGrids{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .energyBar{height:6px;background:#294047;border-radius:10px;overflow:hidden;margin:3px 0 7px}.energyBar b{display:block;height:100%;width:2%;background:linear-gradient(90deg,#6ac2c2,#e1b785);border-radius:10px}.bandRow{display:grid;grid-template-columns:68px 1fr 30px;gap:8px;align-items:center;font-size:10px;color:#a6b6bb}.bandRow .energyBar{margin:0}.bandRow em{font-style:normal;text-align:right}
+  footer{display:flex;justify-content:space-between;gap:20px;padding-top:17px;color:#708d93;font-size:11px}footer a{color:#b8d9d9;text-decoration:none}kbd{border:1px solid #526973;color:#b9d5d8;padding:1px 4px;border-radius:3px;font-size:10px}
+  .hidden{display:none!important}#toast{position:absolute;bottom:84px;left:50%;transform:translateX(-50%);color:#e4f8f1;background:#103c42e9;border:1px solid #71c3be;padding:8px 14px;border-radius:8px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;font-size:12px}#toast.visible{opacity:1}
+  @media(max-width:1100px){.layout{grid-template-columns:220px minmax(320px,1fr)}.rightSide{grid-column:1/-1}.rightSide .inspectorGrids{max-width:400px}.stage{min-height:580px}}
+  @media(max-width:720px){.shell{padding:0 12px 16px}header{height:auto;padding:14px 0}.brandTitle{font-size:18px}.headRight .headExtra{display:none}.modeBar{gap:6px;padding:13px 0}.mode{min-height:75px;padding:8px;gap:8px}.modeNum{font-size:20px}.mode strong{font-size:11px}.mode small{font-size:9px}.layout{display:flex;flex-direction:column}.stage{order:0;min-height:470px}.leftSide{order:1}.rightSide{order:2}.stageBottom{bottom:12px;left:12px;right:12px}.stageBottom p{font-size:10px}.sidebar{padding:15px}.inspectorGrids{grid-template-columns:1fr 1fr}.rightSide .inspectorGrids{max-width:none}footer{flex-direction:column;gap:6px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand"><div class="brandMark">3</div><div><div class="eyebrow">Experimental optics laboratory</div><h1 class="brandTitle">Matter from Residue</h1><div class="subBrand">Sihti × SplatWorld × Moon / CrystalMoon</div></div></div>
+    <div class="headRight"><span class="statusDot"></span><span id="sourceStatus">Procedural source</span><span class="headExtra">· Browser-only · No server</span><a href="https://github.com/anttiluode/3" target="_blank" rel="noopener">GitHub ↗</a></div>
+  </header>
+  <nav class="modeBar" aria-label="Choose experiment">
+    <button class="mode" type="button" data-mode="1" aria-selected="true"><span class="modeNum">01</span><span><strong>The Self-Carving Crystal</strong><small>Gabor packets chase the image residue</small></span></button>
+    <button class="mode" type="button" data-mode="2" aria-selected="false"><span class="modeNum">02</span><span><strong>Frequency-as-Depth Alchemy</strong><small>Peel from deep glow to sharp surface</small></span></button>
+    <button class="mode" type="button" data-mode="3" aria-selected="false"><span class="modeNum">03</span><span><strong>Shatter &amp; Reform</strong><small>Scatter the packets, then let them return</small></span></button>
+  </nav>
+  <main class="layout">
+    <aside class="panel sidebar leftSide">
+      <section><p class="sectionTitle">The experiment</p><h2 class="title2" id="modeTitle">A crystal that learns your shape.</h2><p class="description" id="modeDesc">A blank luminous body becomes an image, one fitted Gabor packet at a time. The image residual decides where the next packet goes.</p></section>
+      <div class="rule"></div>
+      <section><p class="sectionTitle">01 / Choose the world</p><div class="stack"><button class="btn primary" id="cameraBtn">◉ Use live camera</button><label class="btn fileBtn" for="fileInput">↑ Load a photo<input id="fileInput" type="file" accept="image/*"></label><button class="btn" id="demoBtn">↻ Procedural portrait</button></div><p class="description" style="margin-top:9px" id="cameraNote">Camera permission is requested only when you click. No frames leave this page.</p></section>
+      <div class="rule"></div>
+      <section><p class="sectionTitle">02 / Optical controls</p>
+        <div class="sliderGroup"><div class="slHead"><span>Scattering</span><output id="scatterVal">54%</output></div><input id="scatter" aria-label="Scattering" type="range" min="0" max="100" value="54"></div>
+        <div class="sliderGroup"><div class="slHead"><span>Optical thickness</span><output id="depthVal">52%</output></div><input id="depth" aria-label="Optical thickness" type="range" min="0" max="100" value="52"></div>
+        <div class="sliderGroup" id="peelSection"><div class="slHead"><span>Peel toward surface</span><output id="peelVal">35%</output></div><input id="peel" aria-label="Peel toward surface" type="range" min="0" max="100" value="35"></div>
+        <div class="sliderGroup" id="detailSection"><div class="slHead"><span>Reconstructed detail</span><output id="detailVal">100%</output></div><input id="detail" aria-label="Reconstructed detail" type="range" min="0" max="100" value="100"></div>
+      </section>
+      <section><p class="sectionTitle">03 / Material</p><div class="palette" role="group" aria-label="Choose material"><button class="swatch" data-mat="ice" aria-pressed="true">Ice</button><button class="swatch" data-mat="amber" aria-pressed="false">Amber</button><button class="swatch" data-mat="jade" aria-pressed="false">Jade</button><button class="swatch" data-mat="opal" aria-pressed="false">Opal</button><button class="swatch" data-mat="skin" aria-pressed="false">Wax</button></div></section>
+      <div class="stack" style="margin-top:auto"><button class="btn primary hidden" id="shatterBtn">✦ SHATTER THE CRYSTAL</button><div class="two"><button class="btn" id="resetBtn">Reset atoms</button><button class="btn" id="saveBtn">Save frame</button></div></div>
+    </aside>
+    <section class="stage" id="stage" aria-label="Interactive translucent world" role="region">
+      <canvas id="world" aria-label="Optical 3D view"></canvas><canvas id="shards" aria-hidden="true"></canvas>
+      <div class="stageTop"><div><div class="stageLabel" id="viewLabel">01 — Self-carving matter</div><div class="stageSmall">Drag the light · watch material emerge</div></div><div class="stageTag" id="shaderTag">WEBGL2 · STYLIZED TRANSPORT</div></div>
+      <div class="stageBottom"><p id="stageHint">The crystal condenses from broad shapes to smaller details. Move your cursor to relight it.</p><div class="stageLegend">Mouse → light position<br>1 / 2 / 3 → experiments</div></div>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </section>
+    <aside class="panel sidebar rightSide">
+      <section><p class="sectionTitle">Live evidence</p><div class="inspectorGrids"><div class="inspectBox"><canvas id="sourcePreview" width="144" height="144"></canvas><div class="inspectCaption"><span>Known input</span><span>96 × 96</span></div></div><div class="inspectBox"><canvas id="residuePreview" width="144" height="144"></canvas><div class="inspectCaption"><span>Unexplained residue</span><span>×3 contrast</span></div></div></div></section>
+      <section><p class="sectionTitle">Sieve / scale-space energy</p><div id="bands"></div><p class="description" style="margin-top:8px">The Sihti-style bands telescope back to the original image. Here, assigning those bands to optical depths is a creative rendering choice.</p></section>
+      <section><p class="sectionTitle">Reconstruction telemetry</p><div class="readout"><span>Gabor packets fitted</span><strong id="packetCount">0 / 190</strong><span>RGB mean absolute residue</span><strong id="errorVal">—</strong><span>Fitting stage</span><strong id="fitStage">CORE</strong><span>Frames rendered</span><strong id="frameCount">0</strong></div></section>
+      <section><p class="sectionTitle">What is real?</p><p class="description">Greedy packet fitting and additive image residues are computed on your input. Translucency, depth and refraction are illustrative optical effects, <strong style="color:#d1e6e2;font-weight:500">not measured 3D geometry</strong>.</p></section>
+    </aside>
+  </main>
+  <footer><span>Three connected experiments · Runs offline after loading · No AI model download</span><span><kbd>V</kbd> camera · <kbd>Space</kbd> shatter · <kbd>R</kbd> restart · <kbd>S</kbd> screenshot · <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> modes</span></footer>
+</div>
+<video id="webcam" autoplay playsinline muted class="hidden"></video>
+<canvas id="inputCanvas" width="96" height="96" class="hidden"></canvas>
+<script>/* The Sieve + Gabor engine. All CPU, deterministic. No learned weights or backprop.
+   Sihti's exact telescoping identity + lightweight SplatWorld-style oriented packets.
+   This is a new demonstration implementation, not a port of either original model. */
+const N = 96;
+const clamp = (x, a=0, b=1) => Math.max(a, Math.min(b, x));
+
+function blur(src, n, sigma) {
+  const radius = Math.max(1, Math.ceil(sigma*2.4));
+  const w = new Float32Array(radius*2+1);
+  let den=0;
+  for(let k=-radius;k<=radius;k++){let v=Math.exp(-k*k/(2*sigma*sigma)); w[k+radius]=v; den+=v;}
+  for(let k=0;k<w.length;k++)w[k]/=den;
+  const temp=new Float32Array(src.length),out=new Float32Array(src.length);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++)for(let c=0;c<3;c++){
+    let v=0;for(let k=-radius;k<=radius;k++)v+=src[(y*n+clamp(x+k,0,n-1))*3+c]*w[k+radius];
+    temp[(y*n+x)*3+c]=v;
+  }
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++)for(let c=0;c<3;c++){
+    let v=0;for(let k=-radius;k<=radius;k++)v+=temp[(clamp(y+k,0,n-1)*n+x)*3+c]*w[k+radius];
+    out[(y*n+x)*3+c]=v;
+  }
+  return out;
+}
+function sieve(rgb, n=N) {
+  const a=blur(rgb,n,8.5),b=blur(rgb,n,4.3),c=blur(rgb,n,1.5);
+  const sub=(x,y)=>{const out=new Float32Array(x.length);for(let i=0;i<out.length;i++)out[i]=x[i]-y[i];return out;};
+  return [a,sub(b,a),sub(c,b),sub(rgb,c)];
+}
+function compose(bands, maxBand=3){
+  const out=new Float32Array(bands[0].length);
+  for(let j=0;j<=maxBand;j++)for(let i=0;i<out.length;i++)out[i]+=bands[j][i];
+  return out;
+}
+function bandEnergy(bands){return bands.map(b=>{let s=0;for(const x of b)s+=Math.abs(x);return s/b.length;});}
+function toFloat(img){const dst=new Float32Array(img.length/4*3);for(let i=0,j=0;i<img.length;i+=4){dst[j++]=img[i]/255;dst[j++]=img[i+1]/255;dst[j++]=img[i+2]/255;}return dst;}
+function toPixels(arr,n=N,abs=false,scale=1){const out=new Uint8Array(n*n*4);for(let i=0;i<n*n;i++)for(let c=0;c<3;c++){let x=arr[i*3+c]*scale;out[4*i+c]=Math.round(255*clamp(abs?Math.abs(x):x));}for(let i=0;i<n*n;i++)out[4*i+3]=255;return out;}
+function error(target,pred){let s=0;for(let i=0;i<target.length;i++)s+=Math.abs(target[i]-pred[i]);return s/target.length;}
+
+function kernel(dx,dy,sigma,theta,freq){
+  const u=dx*Math.cos(theta)+dy*Math.sin(theta);
+  const v=-dx*Math.sin(theta)+dy*Math.cos(theta);
+  const env=Math.exp(-(u*u+v*v)/(2*sigma*sigma));
+  return env*(.76+.24*Math.cos(u*freq));
+}
+class GreedySplats {
+  constructor(n=N,max=190){this.n=n;this.max=max;this.clear();}
+  clear(){this.atoms=[];this.pred=new Float32Array(this.n*this.n*3);this.target=new Float32Array(this.pred.length);this.bands=sieve(this.target,this.n);this.tick=0;this.noiseIndex=0;}
+  setTarget(rgb){
+    if(rgb.length!==this.target.length)throw new Error('RGB target length mismatch');
+    // Keeping current atoms across frames makes the target a living attractor.
+    this.target.set(rgb);
+    this.bands=sieve(this.target,this.n);
+  }
+  subtractAtom(atom,mult=1){
+    const {x,y,sigma,theta,freq,amp}=atom,r=Math.ceil(2.5*sigma),n=this.n;
+    for(let py=Math.max(0,Math.floor(y-r));py<=Math.min(n-1,Math.ceil(y+r));py++)for(let px=Math.max(0,Math.floor(x-r));px<=Math.min(n-1,Math.ceil(x+r));px++){
+      const k=kernel(px-x,py-y,sigma,theta,freq)*mult;const j=(py*n+px)*3;
+      for(let c=0;c<3;c++)this.pred[j+c]+=k*amp[c];
+    }
+  }
+  rebuild(){this.pred.fill(0);for(const a of this.atoms)this.subtractAtom(a);}
+  fitOne(){
+    const n=this.n,stage=Math.min(3,Math.floor(this.atoms.length/39));
+    const goal=compose(this.bands,stage);
+    const sigma=[12,7,3.6,1.9][stage];
+    // Search candidates by local residual energy. Several points give a robust
+    // pursuit without building huge dictionaries or differentiating a renderer.
+    const candidates=[];
+    for(let y=3;y<n-3;y+=5)for(let x=3;x<n-3;x+=5){
+      const i=(y*n+x)*3;let q=0;
+      for(let c=0;c<3;c++)q+=(goal[i+c]-this.pred[i+c])**2;
+      candidates.push({x,y,q});
+    }
+    candidates.sort((a,b)=>b.q-a.q);
+    if(candidates.length===0)return;
+    // Randomized jumps stop the sieve from allocating every packet to one feature.
+    const rseed=(this.tick*73+this.noiseIndex*137)%candidates.length;
+    let best=null,bestScore=-Infinity;
+    for(const p of [...candidates.slice(0,Math.min(9,candidates.length)),candidates[rseed]]){
+      for(let oi=0;oi<4;oi++){
+        const theta=oi*Math.PI/4, freq=.85/Math.max(2,sigma),radius=Math.ceil(2.4*sigma);
+        let sums=[0,0,0],den=0;
+        for(let yy=Math.max(0,p.y-radius);yy<Math.min(n,p.y+radius+1);yy+=2)for(let xx=Math.max(0,p.x-radius);xx<Math.min(n,p.x+radius+1);xx+=2){
+          const k=kernel(xx-p.x,yy-p.y,sigma,theta,freq),j=(yy*n+xx)*3;
+          den+=k*k;for(let c=0;c<3;c++)sums[c]+=(goal[j+c]-this.pred[j+c])*k;
+        }
+        const sc=(sums[0]**2+sums[1]**2+sums[2]**2)/Math.max(den,.001);
+        if(sc>bestScore){bestScore=sc;best={x:p.x,y:p.y,sigma,theta,freq,amp:sums.map(x=>clamp(x/Math.max(den,.001),-1,1)),phase:0};}
+      }
+    }
+    if(!best)return;
+    // A few packets per frame; their error reduction is genuinely measured.
+    this.atoms.push(best);this.subtractAtom(best);this.tick++;
+    if(this.atoms.length>this.max){this.atoms.splice(0,Math.max(1,Math.floor(this.max*.09)));this.rebuild();}
+  }
+  fit(count=3){for(let i=0;i<count;i++)this.fitOne();}
+  get mae(){return error(this.target,this.pred);}
+}
+
+/* A stylized *screen-space* translucent optical shader. The three bands are
+   mathematical scale-space channels, NOT measured physical depth. */
+const VS=`#version 300 es
+in vec2 aPosition;
+out vec2 vUv;
+void main(){vUv=aPosition*.5+.5;gl_Position=vec4(aPosition,0.,1.);}`;
+const FS=`#version 300 es
+precision highp float;
+in vec2 vUv;out vec4 frag;
+uniform vec2 uResolution,uLight,uTilt;
+uniform float uTime,uScatter,uPeel,uDepth,uExplosion,uDetail;
+uniform int uMode;
+uniform vec3 uTint,uAbsorb;
+uniform sampler2D uSource,uRecon,uLow,uMiddle;
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+1.),f.x),f.y);}
+vec3 backdrop(vec2 p){
+ float r=length(p);
+ vec3 col=mix(vec3(.012,.029,.056),vec3(.035,.075,.093),smoothstep(.1,1.35,r));
+ float grid=(1.-smoothstep(.003,.012,abs(fract(p.x*7.)-.5)))*.028;
+ grid+=(1.-smoothstep(.003,.012,abs(fract(p.y*7.)-.5)))*.028;
+ col+=vec3(.03,.11,.13)*grid;
+ float stars=step(.997,hash(floor(p*vec2(80.,60.))))*(.28+.72*hash(floor(p*66.)));
+ col+=vec3(.22,.39,.51)*stars;
+ float halo=exp(-r*r*2.3)*(.035+.012*sin(uTime*.5));
+ col+=vec3(.04,.13,.19)*halo;
+ return col;
+}
+void main(){
+ vec2 uv=vUv;
+ vec2 p=(uv-.5)*2.;p.x*=uResolution.x/max(1.,uResolution.y);
+ vec2 q=p/vec2(.91,.91);q+=uTilt*.055;
+ float rad=length(q),t=uTime;
+ vec3 col=backdrop(p);
+ float glow=exp(-pow(abs(rad-.94)*8.,2.))*.10;
+ col+=uTint*glow*.22;
+ if(rad<1.03){
+  float inside=1.-smoothstep(.984,1.015,rad);
+  float z=sqrt(max(0.,1.-min(.999,rad*rad)));
+  vec3 N=normalize(vec3(q*.88,z));
+  vec3 L=normalize(vec3(uLight.x*1.8-q.x*.45,uLight.y*1.8-q.y*.45,.88-uDepth*.45));
+  float facet=noise(q*vec2(19.,21.)+sin(t*.11)*.05);
+  vec2 refractUV=q*.47+.5 + (N.xy*.015+(vec2(facet)-.5)*.01)*uScatter;
+  refractUV=clamp(refractUV,.004,.996);
+  vec2 offset=(uLight-q*.3)*(.028+.06*uDepth)*uScatter;
+  vec3 raw=texture(uSource,refractUV).rgb;
+  vec3 fitted=texture(uRecon,refractUV).rgb;
+  vec3 low=texture(uLow,refractUV-offset*(1.0+uDepth)).rgb;
+  vec3 med=texture(uMiddle,refractUV-offset*.46).rgb;
+  vec3 image=uMode==2 ? raw : mix(low,fitted,clamp(uDetail,.0,1.));
+  // The 'depth' slider routes Sihti spatial-frequency residues to visual layers.
+  // This is an artistic hypothesis, not true recovered optical depth.
+  if(uMode==2){
+    vec3 high=raw-med;
+    vec3 between=med-low;
+    image=low+between*(1.1-uPeel*.45)+high*(1.6*uPeel);
+  }
+  float lum=dot(image,vec3(.2126,.7152,.0722));
+  float shad=dot(N,L)*.5+.5;
+  vec3 lightThrough=mix(low,image,.58)+uTint*.09;
+  float thickness=1.9*z+.12;
+  vec3 transmit=exp(-uAbsorb*thickness*(.65+uScatter*1.1));
+  vec3 cloudy=mix(image*uTint*1.42,lightThrough*uTint*1.45,.28+uScatter*.36);
+  cloudy*=transmit+.15;
+  float backlit=pow(max(0.,1.-dot(N,L)),2.)*(.16+.32*uScatter);
+  vec3 outc=cloudy*(.52+.52*shad)+uTint*backlit*(.4+lum);
+  float crystal=pow(max(0.,sin(q.x*28.+facet*9.)*sin(q.y*28.-facet*7.)),6.);
+  outc+=uTint*crystal*.035*(.4+.6*lum);
+  vec3 H=normalize(L+vec3(0,0,1));
+  float spec=pow(max(0.,dot(N,H)),mix(17.,115.,1.-uScatter))*.62;
+  float edge=pow(1.-z,3.5);
+  outc+=vec3(.75,.94,1.)*spec + mix(uTint,vec3(.55,.89,1.),.54)*edge*.28;
+  float silhouette=smoothstep(.025,.38,lum);
+  outc+=uTint*silhouette*(.04+.07*(1.-z));
+  // Fragments replace much of the solid orb in shatter mode.
+  if(uMode==3)outc*=1.-uExplosion*.93;
+  outc+=vec3(.14,.22,.25)*pow(max(.0,noise(q*90.+t*.015)-.58),4.)*.3;
+  col=mix(col,outc,inside);
+ }
+ // Fine circular optical-guide lines stay outside the sculpture.
+ float ring=(1.-smoothstep(.002,.009,abs(rad-1.09)))*.06;
+ col+=uTint*ring;
+ col=pow(max(col,0.),vec3(.87));
+ frag=vec4(clamp(col,0.,1.),1.);
+}`;
+const palette={ice:{tint:[.63,.91,1],absorb:[.10,.05,.035]},amber:{tint:[1,.70,.34],absorb:[.055,.19,.48]},jade:{tint:[.43,.96,.72],absorb:[.22,.035,.27]},opal:{tint:[.91,.61,1],absorb:[.12,.15,.045]},skin:{tint:[1,.75,.65],absorb:[.095,.32,.45]}};
+function compile(gl,type,src){let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+class OpticalView {
+ constructor(canvas,n=96){
+  this.canvas=canvas;this.n=n;
+  const gl=canvas.getContext('webgl2',{alpha:false,antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+  if(!gl)throw new Error('WebGL2 unavailable');this.gl=gl;
+  const pr=gl.createProgram();gl.attachShader(pr,compile(gl,gl.VERTEX_SHADER,VS));gl.attachShader(pr,compile(gl,gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(pr));this.program=pr;gl.useProgram(pr);
+  const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(gl.getAttribLocation(pr,'aPosition'));gl.vertexAttribPointer(gl.getAttribLocation(pr,'aPosition'),2,gl.FLOAT,false,0,0);
+  this.uniforms={};for(const k of ['uResolution','uLight','uTilt','uTime','uScatter','uPeel','uDepth','uExplosion','uDetail','uMode','uTint','uAbsorb'])this.uniforms[k]=gl.getUniformLocation(pr,k);
+  this.textures=[];
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  for(const [i,k] of ['uSource','uRecon','uLow','uMiddle'].entries()){
+   const tex=gl.createTexture();gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);
+   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,n,n,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(n*n*4));
+   gl.uniform1i(gl.getUniformLocation(pr,k),i);this.textures.push(tex);
+  }
+  this.setPalette('ice');
+ }
+ setPalette(key){this.colors=palette[key]||palette.ice;}
+ update(index,pixels){const gl=this.gl;gl.activeTexture(gl.TEXTURE0+index);gl.bindTexture(gl.TEXTURE_2D,this.textures[index]);gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,this.n,this.n,gl.RGBA,gl.UNSIGNED_BYTE,pixels);}
+ draw(s){
+  const gl=this.gl,c=this.canvas,dpr=Math.min(2,window.devicePixelRatio||1),r=c.getBoundingClientRect();
+  const w=Math.max(2,Math.round(r.width*dpr)),h=Math.max(2,Math.round(r.height*dpr));
+  if(c.width!==w||c.height!==h){c.width=w;c.height=h;gl.viewport(0,0,w,h);}
+  const u=this.uniforms;
+  gl.useProgram(this.program);
+  gl.uniform2f(u.uResolution,w,h);gl.uniform2f(u.uLight,s.light[0],s.light[1]);gl.uniform2f(u.uTilt,s.tilt[0],s.tilt[1]);
+  gl.uniform1f(u.uTime,s.time);gl.uniform1f(u.uScatter,s.scatter);gl.uniform1f(u.uPeel,s.peel);gl.uniform1f(u.uDepth,s.depth);
+  gl.uniform1f(u.uExplosion,s.explosion);gl.uniform1f(u.uDetail,s.detail);gl.uniform1i(u.uMode,s.mode);
+  gl.uniform3fv(u.uTint,this.colors.tint);gl.uniform3fv(u.uAbsorb,this.colors.absorb);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+ }
+}
+
+
+
+const $=id=>document.getElementById(id);
+const world=$('world'),shards=$('shards'),stage=$('stage');
+const inputCanvas=$('inputCanvas'),ic=inputCanvas.getContext('2d',{willReadFrequently:true});
+const srcPreview=$('sourcePreview').getContext('2d'),errPreview=$('residuePreview').getContext('2d');
+const video=$('webcam');
+const fit=new GreedySplats(N,190);
+const state={mode:1,source:'demo',light:[.26,.45],tilt:[0,0],scatter:.54,depth:.52,peel:.35,detail:1,time:0,explosion:0,material:'ice',frames:0,lastSample:0,lastStats:0,sourceStamp:0,webcamStream:null,sourceImage:null,slow:false};
+let optical=null,flat=null;
+try{optical=new OpticalView(world,N);}catch(e){
+  flat=world.getContext('2d');$('shaderTag').textContent='CANVAS FALLBACK';console.warn('WebGL2 unavailable',e);
+}
+const overlay=shards.getContext('2d');
+const particleMap=new Map();
+let toastUntil=0;
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('visible');toastUntil=performance.now()+2400;}
+function putPreview(context,arr,abs=false,scale=1){
+ const raw=toPixels(arr,N,abs,scale);let tmp=document.createElement('canvas');tmp.width=N;tmp.height=N;tmp.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(raw),N,N),0,0);
+ context.clearRect(0,0,144,144);context.drawImage(tmp,0,0,144,144);
+}
+function textureArray(data){return toPixels(data,N);}
+function setMode(mode){
+ state.mode=mode;
+ for(const b of document.querySelectorAll('[data-mode]'))b.setAttribute('aria-selected',String(+b.dataset.mode===mode));
+ const titles={1:'A crystal that learns your shape.',2:'Turn frequency into substance.',3:'Shatter the image. Watch it return.'};
+ const descriptions={1:'The blank luminous sphere gains oriented Gabor packets, chosen greedily to reduce the residue. Broad structure comes first.',2:'Sihti splits the image into coarse and fine channels. We assign those channels to illustrative optical depths and relight the material.',3:'Every visible shard corresponds to one fitted Gabor packet. Throw them outward, then watch spring forces return them to the remembered arrangement.'};
+ const hints={1:'The packets are fitted against your current image. Move the pointer to relight the emerging crystal.',2:'Sweep the “Peel toward surface” slider, then move the light behind the translucent volume.',3:'Press SHATTER or click the crystal. The Gabor packets leave and reform the image.'};
+ $('modeTitle').textContent=titles[mode];$('modeDesc').textContent=descriptions[mode];$('stageHint').textContent=hints[mode];
+ $('viewLabel').textContent=['','01 — Self-carving matter','02 — Frequency as optical depth','03 — Shatter & reform'][mode];
+ $('shatterBtn').classList.toggle('hidden',mode!==3);
+ $('peelSection').classList.toggle('hidden',mode!==2);$('detailSection').classList.toggle('hidden',mode!==1);
+ if(mode===3&&fit.atoms.length<16){fit.fit(50);refreshTextures();}
+}
+function reset(){fit.clear();particleMap.clear();state.explosion=0;sampleInput(true);toast('Crystal reset — rebuilding from coarse structure');}
+function drawFallback(){
+ const w=world.width=world.clientWidth||800,h=world.height=world.clientHeight||600;
+ const ctx=flat;const bg=ctx.createRadialGradient(w*.5,h*.5,10,w*.5,h*.5,h*.65);
+ bg.addColorStop(0,'#204c59');bg.addColorStop(.7,'#092635');bg.addColorStop(1,'#06131d');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ let pixels=fit.pred;
+ if(state.mode===2){
+  const b=fit.bands;pixels=new Float32Array(fit.target.length);
+  for(let i=0;i<pixels.length;i++)pixels[i]=clamp(b[0][i]+(1.1-state.peel*.45)*(b[1][i]+b[2][i])+1.6*state.peel*b[3][i]);
+ }
+ const a=document.createElement('canvas');a.width=N;a.height=N;let c=a.getContext('2d');
+ c.putImageData(new ImageData(new Uint8ClampedArray(toPixels(pixels,N)),N,N),0,0);
+ const radius=Math.min(w,h)*.39,cx=w/2,cy=h/2;
+ const halo=ctx.createRadialGradient(cx,cy,radius*.4,cx,cy,radius*1.13);
+ halo.addColorStop(0,'#8de9e700');halo.addColorStop(.74,'#6bdac311');halo.addColorStop(1,'#0c2c3300');ctx.fillStyle=halo;ctx.fillRect(0,0,w,h);
+ ctx.save();ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.clip();
+ ctx.globalAlpha=state.mode===3?1-state.explosion*.8:.94;
+ ctx.filter=`blur(${(state.scatter*2.2).toFixed(1)}px)`;
+ ctx.drawImage(a,cx-radius,cy-radius,radius*2,radius*2);
+ ctx.filter='none';ctx.globalAlpha=1;
+ const haze=ctx.createRadialGradient(cx-radius*.5,cy-radius*.6,3,cx,cy,radius*1.3);
+ const pal={ice:'#b3f6ff',amber:'#efb56f',jade:'#71e5bd',opal:'#ddb4f7',skin:'#ffc2a6'};
+ const color=pal[state.material]||pal.ice;
+ haze.addColorStop(0,color+'55');haze.addColorStop(.45,color+'0a');haze.addColorStop(1,'#081621bb');
+ ctx.fillStyle=haze;ctx.globalCompositeOperation='screen';ctx.fillRect(cx-radius,cy-radius,radius*2,radius*2);ctx.globalCompositeOperation='source-over';ctx.restore();
+ ctx.strokeStyle=color+'bf';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
+ const lx=cx+state.light[0]*radius*.8,ly=cy-state.light[1]*radius*.8;
+ const light=ctx.createRadialGradient(lx,ly,1,lx,ly,radius*.9);light.addColorStop(0,color+'55');light.addColorStop(1,color+'00');
+ ctx.fillStyle=light;ctx.beginPath();ctx.arc(cx,cy,radius,0,6.29);ctx.fill();
+}
+function proceduralPortrait(t){
+ const W=N,h=N;ic.clearRect(0,0,W,h);
+ let bg=ic.createRadialGradient(48,44,1,47,44,68);bg.addColorStop(0,'#174c5c');bg.addColorStop(.5,'#0c2935');bg.addColorStop(1,'#030d16');ic.fillStyle=bg;ic.fillRect(0,0,W,h);
+ const sway=Math.sin(t*.7)*1.7,shift=Math.cos(t*.5)*1.3;
+ // Ambient orbit is still physically represented in the target pixels.
+ ic.strokeStyle='#6fadb34f';ic.lineWidth=.65;ic.beginPath();ic.ellipse(48,48,36,40,.32,0,Math.PI*2);ic.stroke();
+ ic.save();ic.translate(sway,shift);
+ let halo=ic.createRadialGradient(48,52,3,48,52,39);halo.addColorStop(0,'#e8d19a55');halo.addColorStop(1,'#124c6a00');ic.fillStyle=halo;ic.fillRect(5,7,86,88);
+ // Shoulder and jacket volume.
+ ic.fillStyle='#265d64';ic.beginPath();ic.moveTo(7,96);ic.bezierCurveTo(15,71,31,75,36,69);ic.lineTo(59,69);ic.bezierCurveTo(71,76,85,73,93,96);ic.fill();
+ let coat=ic.createLinearGradient(13,78,82,96);coat.addColorStop(0,'#2b7b7f');coat.addColorStop(.55,'#123f54');coat.addColorStop(1,'#193947');ic.fillStyle=coat;ic.beginPath();ic.moveTo(12,96);ic.quadraticCurveTo(20,75,38,76);ic.lineTo(57,76);ic.quadraticCurveTo(77,73,86,96);ic.fill();
+ ic.fillStyle='#ac836e';ic.fillRect(40,62,16,18);
+ // Dark back hair and luminous curls.
+ ic.fillStyle='#16394b';ic.beginPath();ic.moveTo(30,28);ic.quadraticCurveTo(28,2,50,9);ic.quadraticCurveTo(75,7,72,30);ic.lineTo(74,73);ic.quadraticCurveTo(58,84,30,73);ic.closePath();ic.fill();
+ let skin=ic.createLinearGradient(27,22,70,76);skin.addColorStop(0,'#f8dfae');skin.addColorStop(.45,'#d5a879');skin.addColorStop(1,'#855c59');ic.fillStyle=skin;
+ ic.beginPath();ic.moveTo(32,26);ic.bezierCurveTo(28,39,31,58,42,67);ic.quadraticCurveTo(49,75,56,65);ic.bezierCurveTo(68,57,70,34,65,24);ic.quadraticCurveTo(47,14,32,26);ic.fill();
+ ic.fillStyle='#6b5e5b33';ic.beginPath();ic.ellipse(61,50,7,12,.26,0,6.29);ic.fill();
+ // Hair fringe.
+ ic.fillStyle='#183b4a';ic.beginPath();ic.moveTo(30,35);ic.quadraticCurveTo(24,4,50,12);ic.quadraticCurveTo(71,7,69,35);ic.quadraticCurveTo(61,26,59,19);ic.quadraticCurveTo(45,31,30,35);ic.fill();
+ ic.strokeStyle='#bba084aa';ic.lineWidth=1;ic.beginPath();ic.moveTo(36,41);ic.quadraticCurveTo(41,38,45,42);ic.moveTo(53,42);ic.quadraticCurveTo(58,39,63,42);ic.stroke();
+ ic.fillStyle='#233a46';ic.beginPath();ic.ellipse(42,43,1.5,1.15,0,0,6.29);ic.ellipse(59,43,1.5,1.15,0,0,6.29);ic.fill();
+ ic.strokeStyle='#84584d';ic.beginPath();ic.moveTo(49,43);ic.quadraticCurveTo(45,53,51,54);ic.moveTo(43,60);ic.quadraticCurveTo(51,63,58,59);ic.stroke();
+ ic.strokeStyle='#e5c79277';ic.lineWidth=1.4;ic.beginPath();ic.moveTo(28,24);ic.bezierCurveTo(25,43,32,59,33,69);ic.moveTo(69,29);ic.bezierCurveTo(72,48,68,61,66,70);ic.stroke();
+ ic.restore();
+ // Golden botanical shards, to make reflections more legible.
+ ic.strokeStyle='#e3b16f';ic.lineWidth=.8;ic.beginPath();ic.moveTo(8,81);ic.quadraticCurveTo(11,63,18,54);ic.moveTo(84,83);ic.quadraticCurveTo(82,66,77,56);ic.stroke();
+ for(let j=0;j<9;j++){const a=j*2.4+t*.13,r=31+(j%3)*6,x=48+Math.cos(a)*r,y=45+Math.sin(a)*r;ic.fillStyle=j%2?'#81ddd8':'#f5d89c';ic.globalAlpha=.33+.27*Math.sin(t*.8+j)**2;ic.beginPath();ic.arc(x,y,j%3===0?1.25:.65,0,6.29);ic.fill();}
+ ic.globalAlpha=1;
+}
+function sampleInput(force=false){
+ const t=performance.now()/1000;
+ if(state.source==='camera'&&video.readyState>=2){
+  const w=video.videoWidth,h=video.videoHeight,s=Math.min(w,h),x=(w-s)/2,y=(h-s)/2;
+  ic.save();ic.translate(N,0);ic.scale(-1,1);ic.drawImage(video,x,y,s,s,0,0,N,N);ic.restore();
+ }else if(state.source==='image'&&state.sourceImage){
+  const im=state.sourceImage,w=im.naturalWidth||im.width,h=im.naturalHeight||im.height,s=Math.min(w,h);
+  ic.drawImage(im,(w-s)/2,(h-s)/2,s,s,0,0,N,N);
+ }else if(state.source==='demo'){proceduralPortrait(t);}
+ else return;
+ const rgb=toFloat(ic.getImageData(0,0,N,N).data);
+ fit.setTarget(rgb);
+ if(force)fit.fit(2);
+ if(optical){optical.update(0,textureArray(fit.target));optical.update(2,textureArray(fit.bands[0]));optical.update(3,textureArray(compose(fit.bands,2)));}
+}
+function refreshTextures(){if(optical)optical.update(1,textureArray(fit.pred));}
+function renderStats(){
+ const n=fit.atoms.length,stage=Math.min(3,Math.floor(n/39));
+ $('packetCount').textContent=`${n} / ${fit.max}`;
+ $('errorVal').textContent=fit.mae.toFixed(3);
+ $('fitStage').textContent=['COARSE BODY','MID STRUCTURE','SHARP EDGES','FINE DETAILS'][stage];
+ $('frameCount').textContent=String(state.frames);
+ putPreview(srcPreview,fit.target);
+ const diff=new Float32Array(fit.target.length);for(let i=0;i<diff.length;i++)diff[i]=Math.abs(fit.target[i]-fit.pred[i]);
+ putPreview(errPreview,diff,false,3);
+ const energies=bandEnergy(fit.bands),max=Math.max(...energies,.001);const labels=['Core / volume','Mid / haze','Edge / crust','Fine / surface'];
+ $('bands').innerHTML=labels.map((label,j)=>`<div class="bandRow"><span>${label}</span><div class="energyBar"><b style="width:${Math.max(1,energies[j]/max*100).toFixed(1)}%"></b></div><em>${energies[j].toFixed(2)}</em></div>`).join('');
+}
+function syncParticles(){
+ for(const a of fit.atoms)if(!particleMap.has(a)){const x=a.x/N*2-1,y=1-a.y/N*2;particleMap.set(a,{x,y,z:(Math.random()-.5)*.15,vx:0,vy:0,vz:0,r:Math.random()*6.28,vr:0,color:clamp((a.amp[0]+a.amp[1]+a.amp[2])/3,.1,1)});}
+ for(const [key] of particleMap)if(!fit.atoms.includes(key))particleMap.delete(key);
+}
+function shatter(){
+ state.mode!==3&&setMode(3);
+ if(fit.atoms.length<20){fit.fit(65);refreshTextures();}
+ syncParticles();state.explosion=1;
+ for(const p of particleMap.values()){
+  const d=Math.hypot(p.x,p.y)+.1,a=Math.atan2(p.y,p.x)+(Math.random()-.5)*1.5;
+  const speed=(.8+Math.random()*2.6)*(1.2-.35*d);
+  p.vx+=Math.cos(a)*speed;p.vy+=Math.sin(a)*speed;p.vz+=(Math.random()-.5)*3;
+  p.vr+=(Math.random()-.5)*8;
+ }
+ toast('The image has shattered — the remembered positions remain');
+}
+function drawParticles(dt){
+ const w=stage.clientWidth,h=stage.clientHeight,dpr=Math.min(window.devicePixelRatio||1,2);
+ if(shards.width!==Math.round(w*dpr)||shards.height!==Math.round(h*dpr)){shards.width=Math.round(w*dpr);shards.height=Math.round(h*dpr);}
+ overlay.setTransform(dpr,0,0,dpr,0,0);overlay.clearRect(0,0,w,h);
+ if(state.mode!==3)return;
+ syncParticles();
+ const pull=.9; // seconds^-2, a genuine damped spring with inertia.
+ const F=Math.min(dt,.05),size=Math.min(w,h);
+ const arr=[...particleMap.entries()];
+ arr.sort((a,b)=>a[1].z-b[1].z);
+ for(const [a,p] of arr){
+  const tx=a.x/N*2-1,ty=1-a.y/N*2;
+  p.vx+=((tx-p.x)*pull-p.vx*1.65)*F;
+  p.vy+=((ty-p.y)*pull-p.vy*1.65)*F;
+  p.vz+=(-p.z*pull-p.vz*1.7)*F;
+  p.x+=p.vx*F;p.y+=p.vy*F;p.z+=p.vz*F;
+  p.r+=p.vr*F;p.vr*=Math.exp(-2*F);
+  const dist=Math.hypot(p.x-tx,p.y-ty,p.z);
+  const visible=clamp(.25+dist*2+state.explosion*.4,0,1);
+  const zoom=clamp(2.5/(2.7-p.z*.42),.5,2.5);
+  const sx=w/2+p.x*size*.43*zoom+p.z*state.tilt[0]*20;
+  const sy=h/2-p.y*size*.43*zoom-p.z*state.tilt[1]*20;
+  const radius=clamp(a.sigma*size/N*.25*zoom,2,18);
+  const rgb=[clamp(fit.target[(a.y*N+a.x)*3]||.3),clamp(fit.target[(a.y*N+a.x)*3+1]||.7),clamp(fit.target[(a.y*N+a.x)*3+2]||.7)];
+  const c=`rgba(${Math.round((rgb[0]*.7+.3)*255)},${Math.round((rgb[1]*.72+.2)*255)},${Math.round((rgb[2]*.77+.17)*255)},${visible*.76})`;
+  overlay.save();overlay.translate(sx,sy);overlay.rotate(p.r);
+  overlay.fillStyle=c;overlay.beginPath();overlay.moveTo(-radius,0);overlay.lineTo(radius*.7,-radius*.45);overlay.lineTo(radius*.42,radius*.88);overlay.closePath();overlay.fill();
+  overlay.strokeStyle=`rgba(217,249,233,${visible*.45})`;overlay.lineWidth=.7;overlay.stroke();
+  overlay.fillStyle=`rgba(249,245,219,${visible*.48})`;overlay.beginPath();overlay.arc(0,0,Math.max(.7,radius*.19),0,Math.PI*2);overlay.fill();
+  overlay.restore();
+ }
+}
+function setMaterial(key){state.material=key;optical?.setPalette(key);for(const b of document.querySelectorAll('[data-mat]'))b.setAttribute('aria-pressed',String(b.dataset.mat===key));}
+function takeShot(){
+ const c=document.createElement('canvas');c.width=world.width;c.height=world.height;const ctx=c.getContext('2d');
+ ctx.drawImage(world,0,0);ctx.drawImage(shards,0,0,c.width,c.height);
+ const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=`matter-from-residue-${state.mode}.png`;a.click();toast('Saved the current view');
+}
+async function toggleCamera(){
+ if(state.webcamStream){for(const tr of state.webcamStream.getTracks())tr.stop();state.webcamStream=null;video.srcObject=null;state.source='demo';state.sourceImage=null;reset();$('sourceStatus').textContent='Procedural source';$('cameraBtn').textContent='◉ Use live camera';return;}
+ if(!navigator.mediaDevices?.getUserMedia){toast('Camera needs HTTPS or localhost — choose a photo instead');return;}
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+  state.webcamStream=stream;video.srcObject=stream;await video.play();state.source='camera';$('sourceStatus').textContent='LIVE camera · local';$('cameraBtn').textContent='■ Stop camera';reset();
+ }catch(e){toast(`Camera unavailable (${e.name||'permission'}); photo and demo still work`);}
+}
+function wire(){
+ for(const b of document.querySelectorAll('[data-mode]'))b.addEventListener('click',()=>setMode(+b.dataset.mode));
+ for(const b of document.querySelectorAll('[data-mat]'))b.addEventListener('click',()=>setMaterial(b.dataset.mat));
+ for(const id of ['scatter','depth','peel','detail']){
+  const input=$(id);input.addEventListener('input',()=>{state[id]=+input.value/100;$(id+'Val').textContent=input.value+'%';});
+ }
+ $('cameraBtn').addEventListener('click',toggleCamera);
+ $('demoBtn').addEventListener('click',()=>{if(state.webcamStream)toggleCamera();else{state.source='demo';state.sourceImage=null;reset();}$('sourceStatus').textContent='Procedural source';});
+ $('fileInput').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+   const url=URL.createObjectURL(file),img=new Image();
+   img.onload=()=>{URL.revokeObjectURL(url);if(state.webcamStream){for(const tr of state.webcamStream.getTracks())tr.stop();state.webcamStream=null;video.srcObject=null;$('cameraBtn').textContent='◉ Use live camera';}
+    state.sourceImage=img;state.source='image';$('sourceStatus').textContent='Photo · local';reset();toast('Photo loaded: use the three experiments');};
+   img.onerror=()=>{URL.revokeObjectURL(url);toast('Could not load that image');};img.src=url;
+  }catch(err){toast('Image could not be decoded');}
+ });
+ $('resetBtn').addEventListener('click',reset);$('shatterBtn').addEventListener('click',shatter);$('saveBtn').addEventListener('click',takeShot);
+ stage.addEventListener('pointermove',e=>{
+  const r=stage.getBoundingClientRect();const x=clamp((e.clientX-r.left)/r.width*2-1,-1,1),y=clamp(1-(e.clientY-r.top)/r.height*2,-1,1);
+  state.light=[x,y];state.tilt=[x*.8,y*.8];
+ });
+ stage.addEventListener('click',e=>{if(state.mode===3&&!e.target.closest('button'))shatter();});
+ document.addEventListener('keydown',e=>{
+  if(e.target.matches('input')&&e.target.type==='range')return;
+  if(['1','2','3'].includes(e.key))setMode(+e.key);
+  if(e.key.toLowerCase()==='v')toggleCamera();
+  if(e.key.toLowerCase()==='r')reset();
+  if(e.key.toLowerCase()==='s')takeShot();
+  if(e.code==='Space'){e.preventDefault();shatter();}
+ });
+}
+let prev=0;
+function animate(ts){
+ const dt=prev?Math.min(.05,(ts-prev)/1000):1/60;prev=ts;
+ state.time=ts/1000;state.frames++;
+ if(ts-state.lastSample>210){
+  state.lastSample=ts;
+  sampleInput();
+  fit.fit(state.source==='camera'?5:6);refreshTextures();
+ }
+ if(optical)optical.draw(state);else drawFallback();
+ state.explosion*=Math.exp(-dt*.58);
+ drawParticles(dt);
+ if(ts-state.lastStats>550){state.lastStats=ts;renderStats();}
+ if(toastUntil&&ts>toastUntil){$('toast').classList.remove('visible');toastUntil=0;}
+ requestAnimationFrame(animate);
+}
+wire();sampleInput(true);refreshTextures();setMode(1);renderStats();requestAnimationFrame(animate);
+
+</script>
+</body></html>
